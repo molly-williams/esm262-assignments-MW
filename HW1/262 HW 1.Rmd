@@ -1,0 +1,158 @@
+---
+title: "262 HW 1"
+author: "Molly Williams"
+date: "5/3/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+## Import and Tidy
+```{r}
+
+parcels_raw <-
+  read_delim(
+    "parcels.csv.zip",
+    delim = ",",
+    col_types = cols(.default = col_character())
+  )
+
+parcels <- transmute(parcels_raw,
+    APN        = parse_character(APN, na = "NA"),
+    Situs1     = parse_character(Situs1, na = "NA"),
+    Situs2     = parse_character(Situs2, na = "NA"),
+    Acreage    = parse_double(Acreage, na = "NA"),
+    UseCode    = parse_character(UseCode),
+    NonTaxCode = parse_character(NonTaxCode, na = "NA"),
+    AgPres     = parse_character(AgPres),
+    LandValue  = parse_number(LandValue),
+    Net_Impr   = parse_number(Net_Impr),
+    Net_AV     = parse_number(Net_AV),
+    M_Address1 = parse_character(M_Address1, na = "NA"),
+    M_Address2 = parse_character(M_Address2, na = "NA")
+
+  )
+
+parcels_csv <- write_delim(parcels,
+  "parcels.csv",
+  delim = "|",
+  na = ""
+)
+
+  
+```
+
+## Analyze 
+
+### 1. Top 10 most frequently occurring land uses 
+
+```{r}
+
+# Import use codes
+usecodes_raw <-
+  read_delim(
+    "UseCodes.csv",
+    delim = "|",
+    col_types = cols(.default = col_character())
+  )
+
+top_uses <- parcels %>%
+  left_join(usecodes_raw, by = "UseCode") %>% 
+  group_by(UseCode, CodeDesc) %>%
+  tally() %>% 
+  filter(n>1000) %>% 
+  arrange(desc(n))
+
+DT::datatable(top_uses)
+
+```
+
+
+### 2. Acres in agricultural preserves
+```{r}
+
+ag <- parcels %>% 
+  filter(!is.na(AgPres))
+
+print(sum(ag$Acreage))
+
+```
+
+### 3. Mean net assessed value per acre
+```{r}
+
+# Retaining parcels that do not have any value 
+net_av <- parcels %>% 
+  filter(!is.na(Net_AV)) %>% 
+  filter(!is.na(Acreage)) %>%
+  filter(Acreage>0) %>% 
+  select(Net_AV, Acreage)
+
+avg_acreage <- mean(net_av$Acreage)
+avg_netav <- mean(net_av$Net_AV)
+
+print(avg_netav/avg_acreage)
+
+# Retaining only parcels that have a value >0 
+net_av2 <- parcels %>% 
+  filter(!is.na(Net_AV)) %>% 
+  filter(!is.na(Acreage)) %>%
+  filter(Acreage>0) %>% 
+  filter(Net_AV>0) %>%
+  select(Net_AV, Acreage)
+
+avg_acreage2 <- mean(net_av2$Acreage)
+avg_netav2 <- mean(net_av2$Net_AV)
+
+print(avg_netav2/avg_acreage2)
+```
+
+
+### 4. Total net assessed value of all non-taxable parcels
+```{r}
+
+non_tax <- parcels %>%
+  filter(!is.na(NonTaxCode))
+  
+print(sum(non_tax$Net_AV))
+
+```
+
+### 5. 10 largest property holders by acreage
+```{r}
+
+living_large <- parcels %>% 
+  filter(!is.na(M_Address1)) %>% 
+  filter(!is.na(M_Address2)) %>% 
+  select(Acreage, M_Address1, M_Address2) %>%
+  arrange(desc(Acreage)) %>%
+  filter(Acreage>5400) 
+
+# Two addresses are duplicated so I filtered for the top 12... time to wage a war against the bourgeoisie !!!!!
+```
+
+
+### 6. 10 largest property holders by net accessed value
+```{r}
+
+fat_cats <- parcels %>% 
+  filter(!is.na(M_Address1)) %>% 
+  filter(!is.na(M_Address2)) %>% 
+  filter(!is.na(Net_AV)) %>% 
+  select(Net_AV, M_Address1, M_Address2) %>%
+  arrange(desc(Net_AV)) %>% 
+  filter(Net_AV>70000000) 
+
+
+```
+
+
+
+
