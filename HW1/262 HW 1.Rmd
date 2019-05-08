@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, messages=FALSE}
 library(tidyverse)
 library(here)
 ```
@@ -136,6 +136,9 @@ living_large <- parcels %>%
   filter(Acreage>5400) 
 
 # Two addresses are duplicated so I filtered for the top 12... time to wage a war against the bourgeoisie !!!!!
+
+DT::datatable(living_large)
+
 ```
 
 
@@ -150,6 +153,7 @@ fat_cats <- parcels %>%
   arrange(desc(Net_AV)) %>% 
   filter(Net_AV>70000000) 
 
+DT::datatable(fat_cats)
 
 ```
 
