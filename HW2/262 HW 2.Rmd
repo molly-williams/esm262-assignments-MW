@@ -2,14 +2,17 @@
 title: "262 HW 2"
 author: "Molly Williams"
 date: "5/17/2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, messages=FALSE}
+```{r, message=FALSE}
 library(tidyverse)
 library(here)
 library(DBI)
