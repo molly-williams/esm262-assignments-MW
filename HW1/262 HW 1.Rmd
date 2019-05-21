@@ -145,6 +145,7 @@ DT::datatable(living_large)
 ### 6. 10 largest property holders by net accessed value
 ```{r}
 
+# Old: 
 fat_cats <- parcels %>% 
   filter(!is.na(M_Address1)) %>% 
   filter(!is.na(M_Address2)) %>% 
@@ -152,6 +153,18 @@ fat_cats <- parcels %>%
   select(Net_AV, M_Address1, M_Address2) %>%
   arrange(desc(Net_AV)) %>% 
   filter(Net_AV>70000000) 
+
+
+# Corrected 20May:
+
+fat_cats <- parcels %>% 
+  filter(!is.na(M_Address1)) %>% 
+  filter(!is.na(M_Address2)) %>% 
+  filter(!is.na(Net_AV)) %>% 
+  select(Net_AV, M_Address1, M_Address2) %>% 
+  group_by(M_Address1, M_Address2) %>% 
+  tally(Net_AV)
+
 
 DT::datatable(fat_cats)
 

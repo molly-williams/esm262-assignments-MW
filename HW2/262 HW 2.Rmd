@@ -1,0 +1,138 @@
+---
+title: "262 HW 2"
+author: "Molly Williams"
+date: "5/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, messages=FALSE}
+library(tidyverse)
+library(here)
+library(DBI)
+```
+
+## Import and Tidy
+```{r}
+
+# Import and parse parcel data 
+parcels_raw <-
+  read_delim(
+    "parcels.csv.zip",
+    delim = ",",
+    col_types = cols(.default = col_character())
+  )
+
+parcels <- transmute(parcels_raw,
+    APN        = parse_character(APN, na = "NA"),
+    Situs1     = parse_character(Situs1, na = "NA"),
+    Situs2     = parse_character(Situs2, na = "NA"),
+    Acreage    = parse_double(Acreage, na = "NA"),
+    UseCode    = parse_character(UseCode),
+    NonTaxCode = parse_character(NonTaxCode, na = "NA"),
+    AgPres     = parse_character(AgPres),
+    LandValue  = parse_number(LandValue),
+    Net_Impr   = parse_number(Net_Impr),
+    Net_AV     = parse_number(Net_AV),
+    M_Address1 = parse_character(M_Address1, na = "NA"),
+    M_Address2 = parse_character(M_Address2, na = "NA")
+
+  )
+
+# Import use codes and join to parcel data 
+usecodes_raw <-
+  read_delim(
+    "UseCodes.csv",
+    delim = "|",
+    col_types = cols(.default = col_character())
+  )
+
+
+db <- dbConnect(RSQLite::SQLite(), dbname = "parcels.db")
+
+dbWriteTable(conn = db, name = "parcels", value = parcels, overwrite = TRUE)
+
+dbWriteTable(conn = db, name = "usecodes", value = usecodes_raw, overwrite = TRUE)
+  
+```
+
+## Analyze parcels database using SQL
+
+### 1. Top 10 most frequently occurring land uses 
+```{sql connection=db}
+
+SELECT CodeDesc, COUNT(CodeDesc) AS total_parcels
+FROM parcels JOIN usecodes
+ON parcels.UseCode = usecodes.UseCode
+GROUP BY parcels.UseCode
+ORDER BY total_parcels DESC
+LIMIT 10
+
+```
+
+
+### 2. Acres in agricultural preserves
+
+```{sql connection=db}
+
+SELECT SUM(Acreage) FROM parcels WHERE AgPres IS NOT NULL
+
+```
+
+### 3. Mean net assessed value per acre
+
+Retaining parcels that have an assessed value >= 0
+```{sql connection=db}
+
+SELECT SUM(Net_AV)/SUM(Acreage)
+FROM parcels
+WHERE Acreage IS NOT NULL 
+AND Net_AV IS NOT NULL
+AND Acreage >0
+
+```
+
+### 4. Total net assessed value of all non-taxable parcels
+```{sql connection=db}
+
+SELECT SUM(Net_AV) FROM parcels WHERE NonTaxCode IS NOT NULL
+
+
+```
+
+
+### 5. 10 largest property holders by acreage
+
+```{sql connection=db}
+
+SELECT M_Address1, M_Address2, SUM(Acreage) AS total_acreage
+FROM parcels
+WHERE M_Address1 IS NOT NULL
+AND M_Address2 IS NOT NULL
+GROUP BY M_Address1, M_Address2
+ORDER BY total_acreage DESC
+LIMIT 10
+
+```
+
+
+### 6. 10 largest property holders by net accessed value
+
+```{sql connection=db}
+
+SELECT M_Address1, M_Address2, SUM(Net_AV) AS total_value
+FROM parcels
+WHERE M_Address1 IS NOT NULL
+AND M_Address2 IS NOT NULL 
+AND Net_AV IS NOT NULL
+GROUP BY M_Address1, M_Address2
+ORDER BY total_value DESC
+LIMIT 10
+
+```
+
+
+

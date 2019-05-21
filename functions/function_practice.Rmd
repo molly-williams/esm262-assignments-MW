@@ -1,0 +1,25 @@
+---
+title: "Function Practice"
+author: "Molly Williams"
+date: "5/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Source the R file that contains your function, which includes all of the pre-set parameters for calculating vehicle power 
+
+source("my_function.R")
+
+# Plug variable values for velocity (V), mass (m), and surface area of the car (A)
+
+power = auto(V=30, m=31752, A=2.5)
+
+print(power)
+
+```
+
