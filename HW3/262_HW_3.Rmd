@@ -1,0 +1,85 @@
+---
+title: "262 HW 3"
+author: "Molly Williams"
+date: "5/24/2019"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Background
+
+Goal: Compare policy options by analyzing potential average power output if rolling coefficients are reduced by 50% OR mean speed is reduced from 100 km/h to 80 km/h. 
+
+
+### Mean power calculation for 100 km/h (27.8 m/s) and 50% reduction in c_roll
+```{r}
+
+# Source the R file that contains function auto() and includes all of the pre-set parameters for calculating vehicle power
+source("my_function.R")
+
+# Establish probabilities for car areas and mass
+possible_cars = data.frame(mass=c(31000,45000,38000), area = c(25,30,22))
+possible_cars$prob = c(0.4, 0.4, 0.2)
+
+# Create array of 100 samples from a distribution with a mean of 27.8 m/s and 10% standard deviation (assuming log normal distribution of speeds around this mean), store in a new df called results
+nsample = 100000
+set.seed(262)
+m_100 = 27.8
+speeds_100 = rnorm(mean=m_100, sd=0.1*m_100, n=nsample)
+results_100 = data.frame(speed=speeds_100, power=NA)
+
+
+# Assign mass and area to each car based on probability, add into results df 
+possible_cars$row = seq(from=1, to=nrow(possible_cars))
+whichcar = base::sample(possible_cars$row, size=nsample, prob=possible_cars$prob, replace=TRUE)
+results_100$mass = possible_cars$mass[whichcar]
+results_100$area = possible_cars$area[whichcar]
+
+# Calculate power (W) for each sample in the distribution using rolling coefficient that is reduced by 50% from 0.015 to 0.0075
+results_100$power = auto(A=results_100$area, V=results_100$speed, m=results_100$mass, c_roll = 0.0075)
+
+# Find mean of the power estimates (W)
+print(mean(results_100$power))
+
+# 182,679 W = average power output
+
+```
+
+
+
+### Mean power calculation for 80 km/h (22.2 m/s)
+```{r}
+
+
+# Create array of 100 samples from a distribution with a mean of 22.2 m/s and 10% standard deviation (assuming log normal distribution of speeds around this mean), store in a new df called results
+nsample = 100000
+set.seed(262)
+m_80 = 22.2
+speeds_80 = rnorm(mean=m_80, sd=0.1*m_80, n=nsample)
+results_80 = data.frame(speed=speeds_80, power=NA)
+
+
+# Add car mass and area based on probability into new results df 
+possible_cars$row = seq(from=1, to=nrow(possible_cars))
+whichcar = base::sample(possible_cars$row, size=nsample, prob=possible_cars$prob, replace=TRUE)
+results_80$mass = possible_cars$mass[whichcar]
+results_80$area = possible_cars$area[whichcar]
+
+# Calculate power for each sample in the distribution using original rolling coefficient of 0.015
+results_80$power = auto(A=results_80$area, V=results_80$speed, m=results_80$mass)
+
+# Find mean of the power estimates 
+print(mean(results_80$power))
+
+# 177,447 W = average power output
+
+```
+
+Reducing average speed results in a lower power output, and therefore lower fuel consumption, making this the more favorable policy option.
+

@@ -105,7 +105,7 @@ And flow rates anywhere between 0.1 and 1
 
 source("R/autopower.R")
 
-# generate sample speeds from a distribution
+# generate 100 sample speeds from a distribution where the mean speed is 25 m/s with a stdev of 4
 nsample = 100
 speeds = rnorm(mean=25, sd=4, n=nsample)
 
@@ -118,8 +118,7 @@ results = data.frame(speed=speeds, power=NA)
 
 head(results)
 
-# if you only have one input and everything elese is the same, R is smart enough
-# to create a set of outputs
+# if you only have one input and everything elese is the same, R is smart enough to create a set of outputs
 results$power = autopower(V=speeds, A=25, m=20000)
 
 # ALWAYS look at your results to make sure it make sense
