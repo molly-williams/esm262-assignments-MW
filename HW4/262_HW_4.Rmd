@@ -1,0 +1,48 @@
+---
+title: "262 HW 4"
+author: "Molly Williams"
+date: "5/31/2019"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+### Background
+
+Create a function that calculates the following:
+
+- most frequently caught fish in each location
+- total revenue for each location
+- total fisheries revenue sum
+- graph of revenue by location and total revenue (as text)
+
+
+### Load data tables for fish prices and catch by location
+```{r}
+fish_catch <- read_csv("fish_catch.csv")
+fish_prices <- read_csv("fish_prices.csv")
+
+# Created these in excel using random numbers. 
+```
+
+
+### Create function 
+
+```{r}
+
+# Source the R file that contains function auto() and includes all of the pre-set parameters for calculating vehicle power
+source("fish_function.R")
+
+
+
+```
+
+
+Reducing average speed results in a lower power output, and therefore lower fuel consumption, making this the more favorable policy option.
+
