@@ -1,6 +1,1 @@
-﻿species,hawaii_catch,alaska_catch,california_catch
-tuna,500,0,300
-salmon,0,1000,500
-rockfish,0,500,800
-black cod,0,900,700
-ono,500,0,500
+species,hawaii_catch,alaska_catch,california_catchtuna,500,0,300salmon,0,1000,500rockfish,0,500,800black cod,0,900,700ono,200,0,500
