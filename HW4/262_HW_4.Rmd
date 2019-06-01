@@ -1,6 +1,6 @@
 ---
 title: "262 HW 4"
-author: "Molly Williams"
+author: "Molly Williams and Mario Colin"
 date: "5/31/2019"
 output: 
   html_document:
@@ -11,6 +11,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(readr)
+library(reshape2)
 ```
 
 ### Background
@@ -25,10 +27,11 @@ Create a function that calculates the following:
 
 ### Load data tables for fish prices and catch by location
 ```{r}
+
 fish_catch <- read_csv("fish_catch.csv")
 fish_prices <- read_csv("fish_prices.csv")
 
-# Created these in excel using random numbers. 
+# Created these in excel using random numbers
 ```
 
 
@@ -40,9 +43,19 @@ fish_prices <- read_csv("fish_prices.csv")
 source("fish_function.R")
 
 
-
 ```
 
+#run function 
 
-Reducing average speed results in a lower power output, and therefore lower fuel consumption, making this the more favorable policy option.
+```{r}
+
+graph_output <- calc_fish_revenue(l = fish_catch, p = fish_prices, graph_result = TRUE)
+
+graph_output
+
+no_graph_output <- calc_fish_revenue(l = fish_catch, p = fish_prices, graph_result = FALSE)
+
+no_graph_output
+```
+
 
