@@ -8,7 +8,7 @@
 #'
 #' @author Molly Williams and Mario Colon 
 
-calc_fish_revenue = function(l, p, graph_result = TRUE) {
+calc_fish_revenue = function(l, p, graph_result = TRUE, total_revenue = TRUE) {
 
   ##Max Frequency 
   
@@ -17,22 +17,24 @@ calc_fish_revenue = function(l, p, graph_result = TRUE) {
   hawaii_freq <- fish_catch %>% 
     select(species, hawaii_catch) %>% 
     filter(hawaii_catch == max(hawaii_catch)) %>% 
-    melt(id = "species")
-  
-  hawaii_freq
+    melt(id = "species") %>% 
+    rename(location = variable, catch = value)
   
   alaska_freq <- fish_catch %>% 
     select(species, alaska_catch) %>% 
     filter(alaska_catch == max(alaska_catch)) %>% 
-    melt(id = "species")
+    melt(id = "species") %>% 
+    rename(location = variable, catch = value)
   
   california_freq <- fish_catch %>% 
     select(species, california_catch) %>% 
     filter(california_catch == max(california_catch)) %>% 
-    melt(id = "species")
+    melt(id = "species") %>% 
+    rename(location = variable, catch = value)
   
   #create dataframe for highest caught fish
   max_freq <- rbind(hawaii_freq, alaska_freq, california_freq)
+  
   
   ##Total Revenue for each location 
   
@@ -41,12 +43,15 @@ calc_fish_revenue = function(l, p, graph_result = TRUE) {
                              Alaska = fish_catch[,3] * fish_prices[,2], 
                              California = fish_catch[,4] * fish_prices[,2])
   
-  fish_revenue = melt(fish_revenue, id = "fish")
+  # Expand into tidy data
+  fish_revenue <- fish_revenue %>% 
+    melt(id = "fish") %>% 
+    rename(catch = value, location = variable)
   
   #sum each location 
   rev <- fish_revenue %>% 
-    group_by(variable) %>% 
-    summarise(total_rev = sum(value))
+    group_by(location) %>% 
+    summarise(total_rev = sum(catch))
   
   rev = as.data.frame(rev)
   
@@ -58,28 +63,29 @@ calc_fish_revenue = function(l, p, graph_result = TRUE) {
   
   rev_graph = as.data.frame(rev)
   
-  final_graph = ggplot(rev_graph, aes(x=variable, y = total_rev)) +
+  final_graph = ggplot(rev_graph, aes(x=location, y = total_rev)) +
     geom_bar(stat = "identity", fill = "cyan", col = "purple") +
     theme_classic() +
     ylab("Total Revenue") +
     xlab("Catch Location") +
-    labs(Title = "Total Revenu by Catch Location")
+    labs(title = "Total Revenue by Catch Location",
+         subtitle = "Total overall revenue = $52,700")
   
   
   ##Returns
   
   
-  #with graph
+  # with graph
     
-  if(graph_result == TRUE) return(list("Most_Frequent_Fish" = as.matrix(max_freq), "Per_Site_Revenue" = as.matrix(rev), 
+  if(graph_result == TRUE) return(list("Most_Frequent_Fish" = as.matrix(max_freq), "Per_Site_Revenue" = as.matrix(rev),
                                        "Total_Fisheries_Revenue" = as.character(total_fish_rev), "Total_Fisheries_Graph" = final_graph))
+                    
   
-  #without graph 
+  # without graph 
   
   if(graph_result == FALSE) return(list("Most_Frequent_Fish" = as.matrix(max_freq), "Per_Site_Revenue" = as.matrix(rev), 
                                        "Total_Fisheries_Revenue" = as.character(total_fish_rev)))
-  
-  
+
   }
 
 

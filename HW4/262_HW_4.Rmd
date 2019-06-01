@@ -1,6 +1,6 @@
 ---
 title: "262 HW 4"
-author: "Molly Williams and Mario Colin"
+author: "Molly Williams and Mario Colon"
 date: "5/31/2019"
 output: 
   html_document:
@@ -22,7 +22,7 @@ Create a function that calculates the following:
 - most frequently caught fish in each location
 - total revenue for each location
 - total fisheries revenue sum
-- graph of revenue by location and total revenue (as text)
+- produces graph of revenue by location and total revenue (as text) when user requests 
 
 
 ### Load data tables for fish prices and catch by location
@@ -31,7 +31,10 @@ Create a function that calculates the following:
 fish_catch <- read_csv("fish_catch.csv")
 fish_prices <- read_csv("fish_prices.csv")
 
-# Created these in excel using random numbers
+# Created these in excel using made-up numbers, saved as csvs 
+# Catch is in pounds, price is in $ USD per pound
+
+
 ```
 
 
@@ -45,7 +48,7 @@ source("fish_function.R")
 
 ```
 
-#run function 
+### Run function 
 
 ```{r}
 
@@ -56,6 +59,7 @@ graph_output
 no_graph_output <- calc_fish_revenue(l = fish_catch, p = fish_prices, graph_result = FALSE)
 
 no_graph_output
+
 ```
 
 
