@@ -35,16 +35,24 @@ You can work in pairs.
 
 ```{r}
 
+
+# Import data from ONI databse (NOAA ESRL)
+nino_data_raw <-
+  read_delim(
+    "oni data.csv",
+    delim = " ",
+    col_types = cols(.default = col_character())
+  )
+
+# Wrangle and tidy
+nino_data <-  nino_data_raw %>% 
+  tidyr::gather(key="month", value="ONI", -(year)) 
+
+
 #Creating el nino data
 
-ONI <- runif(120, -2, 2)
-Year <-rep(2008:2018, each =12)
-Month <-rep(1:12, times=10)
+
 Precip <- runif(120, 0, 50)
-
-
-nino_data <- as.data.frame(cbind(Year, Month, ONI, Precip))
-
 ```
 
 
