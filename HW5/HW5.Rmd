@@ -1,62 +1,107 @@
 ---
 title: "Assignment 5"
-author: "Austin Richards"
+author: "Austin Richards and Molly Williams"
 date: "6/7/2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+### Background
+We chose to develop our package based on ENSO data, as climate change is expected to intensify impacts from El Nino and La Nina. We created two functions to summarize the monthly ENSO data from 1950-2018 (which ranges from -2 to 2 and is based on sea surface temperature monitoring) and three functions to estimate weather impacts and costs from increased risk of environmental disturbances. 
 
-library(tidyverse)
-library(lubridate)
-```
+Data source: [NOAA ESRL](https://www.esrl.noaa.gov/psd/data/correlation/oni.data)
 
 
-The goal of this assignment is to create a package that will be used for assessing climate change impacts and developing mitigation and adaptation strategies
+1) **Summary functions**
+    - enso_extremes(): Function that finds the minimum/maximum values from the data set
+    - enso_plot() Function that graphs the data over time
+
+2) **Impact calculation functions**
+    - predict_precip(): predict precipitation in a specific location based on ONI value using a linear model. lm under the hood, in function user inputs index score, output will be rain fall. Rainfall ~ ONI (user will input value between -2 and 2)
+    - predict_temp(): predict air temperature using the same inputs as above
+
+3) **Cost estimation function**
+    - enso_cost(): Damages from environmental disturbances (typhoons, etc) based on ONI 
 
 
-Here’s what the package should contain
+**Delete later**: 
 
-1) At least two different functions that summarize climate data in some way (your choice - it could be finding a trend, or finding extremes; or even simply mean winter precipitation)
-2) At least two functions that calculate some measure of impact (you can really make these us) -so for example you could create a function that computes a heat stress index based on air temperature with parameters that vary with for different species; or a function that estimates water supply from precipitation with parameters that vary to reflect water storage …you can make something up just as long as its somewhat sensible
-3) One function that estimates the costs of impacts
-
--use multi-dimensional arrays in one of your functions
 The package should contain:
 
 a) some sample data
 b) documentation for ALL functions
 c) a vignette that shows how to use several of the functions with the sample data
 d) 3 separate tests - (next weeks lecture)
-You can work in pairs.
+e) Multi-dimensional array examples
+- e.g., find temp at multiple sites for same month/year (temp[year,month,site])
+- could do a full join on two data frames with data for separate sites
+- can perform functions on arrays easier than data frames 
 
 
+### Load packages and source function file
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
+library(tidyverse)
+library(zoo)
+source("oni_function.R")
+
+```
+
+### Import and wrangle data 
 ```{r}
 
-
 # Import data from ONI databse (NOAA ESRL)
-nino_data_raw <-
+enso_data_raw <-
   read_delim(
     "oni data.csv",
     delim = " ",
     col_types = cols(.default = col_character())
   )
 
-# Wrangle and tidy
-nino_data <-  nino_data_raw %>% 
-  tidyr::gather(key="month", value="ONI", -(year)) 
+    
+# Organize and tidy
+## Each row has a single ONI value for a month and year
+enso_data <-  enso_data_raw %>% 
+  tidyr::gather(key="month", value="ONI", -(year)) %>% 
+  dplyr::transmute(year = parse_double(year),
+                   month = parse_double(month),
+                   ONI = parse_double(ONI)) %>% 
+  mutate(date = with(enso_data, sprintf("%d-%02d", year, month)))
 
 
-#Creating el nino data
-
-
-Precip <- runif(120, 0, 50)
 ```
 
 
-Two functions to sumarize climate data:
--LM ONI ~ Date
--Show highest and lowest scores
+### Summary functions
+```{r}
+
+enso_extremes(enso_data)
+
+enso_plot(enso_data)
+
+# This looks pretty weird... should we do any smoothing on it or add any labels for what the values mean? (e.g. add a band for where it's considered La Nina vs El Nino)
+  
+```
+
+
+### Impact functions
+```{r}
+
+
+```
+
+
+### Cost function
+```{r}
+
+
+```
+
+
+
+
+
 
