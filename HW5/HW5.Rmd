@@ -13,6 +13,25 @@ library(lubridate)
 ```
 
 
+The goal of this assignment is to create a package that will be used for assessing climate change impacts and developing mitigation and adaptation strategies
+
+
+Here’s what the package should contain
+
+1) At least two different functions that summarize climate data in some way (your choice - it could be finding a trend, or finding extremes; or even simply mean winter precipitation)
+2) At least two functions that calculate some measure of impact (you can really make these us) -so for example you could create a function that computes a heat stress index based on air temperature with parameters that vary with for different species; or a function that estimates water supply from precipitation with parameters that vary to reflect water storage …you can make something up just as long as its somewhat sensible
+3) One function that estimates the costs of impacts
+
+-use multi-dimensional arrays in one of your functions
+The package should contain:
+
+a) some sample data
+b) documentation for ALL functions
+c) a vignette that shows how to use several of the functions with the sample data
+d) 3 separate tests - (next weeks lecture)
+You can work in pairs.
+
+
 
 ```{r}
 
@@ -21,8 +40,15 @@ library(lubridate)
 ONI <- runif(120, -2, 2)
 Year <-rep(2008:2018, each =12)
 Month <-rep(1:12, times=10)
+Precip <- runif(120, 0, 50)
 
-nino_data <- as.data.frame(cbind(Year, Month, ONI))
+
+nino_data <- as.data.frame(cbind(Year, Month, ONI, Precip))
 
 ```
+
+
+Two functions to sumarize climate data:
+-LM ONI ~ Date
+-Show highest and lowest scores
 
