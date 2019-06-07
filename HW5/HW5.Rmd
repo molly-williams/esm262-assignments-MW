@@ -1,0 +1,24 @@
+---
+title: "Assignment 5"
+author: "Austin Richards"
+date: "6/7/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+
+
+```{r}
+
+ONI <- runif(120, -2, 2)
+Year <-(rep(2008:2018, each =12))
+
+
+
+```
+
