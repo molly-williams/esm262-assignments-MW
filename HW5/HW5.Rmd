@@ -9,16 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+library(lubridate)
 ```
 
 
 
 ```{r}
 
+#Creating el nino data
+
 ONI <- runif(120, -2, 2)
-Year <-(rep(2008:2018, each =12))
+Year <-rep(2008:2018, each =12)
+Month <-rep(1:12, times=10)
 
-
+nino_data <- as.data.frame(cbind(Year, Month, ONI))
 
 ```
 
