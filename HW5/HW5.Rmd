@@ -19,7 +19,7 @@ Data source: [NOAA ESRL](https://www.esrl.noaa.gov/psd/data/correlation/oni.data
     - enso_plot() Function that graphs the data over time
 
 2) **Impact calculation functions**
-    - predict_precip(): predict precipitation in a specific location based on ONI value using a linear model. lm under the hood, in function user inputs index score, output will be rain fall. Rainfall ~ ONI (user will input value between -2 and 2)
+    - predict_precip(): predict precipitation in a specific location based on ONI value using a linear model. lm under the hood, in function user inputs index score, output will be rain fall. Rainfall ~ ONI (user will input value between -3 and 3)
     - predict_temp(): predict air temperature using the same inputs as above
 
 3) **Cost estimation function**
@@ -72,8 +72,11 @@ enso_data <-  enso_data_raw %>%
 
 enso_data <- mutate(enso_data, date=with(enso_data, sprintf("%d-%02d", year, month)))
 
+#Adding weather data from Port Moresby, Papua New Guinea, taken from NOAA data tool and creating a dataframe which contains monthly ONI value along with Precipitation and Temperature for every month available (up tell 2003)
+weather <- read_csv("port_moresby_weather.csv")
+colnames(weather)[colnames(weather)=="DATE"] <- "date"
 
-
+port_moresby <- left_join(weather, enso_data, by = "date")
 
 ```
 
@@ -87,6 +90,24 @@ enso_plot(enso_data)
 
 # This looks pretty weird... should we do any smoothing on it or add any labels for what the values mean? (e.g. add a band for where it's considered La Nina vs El Nino)
   
+```
+
+
+```{r}
+try <- lm(PRCP ~ ONI, data = port_moresby)
+
+try$coefficients
+```
+
+
+```{r}
+predict_precip = function(data) {
+  model <- lm(PRCP ~ ONI, data = (data))
+  
+ return(model$coefficients) 
+}
+
+predict_precip(port_moresby)
 ```
 
 

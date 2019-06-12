@@ -30,7 +30,7 @@ enso_extremes = function(data) {
 
 enso_plot = function(data) {
   plot <- ggplot(enso_data, aes(x=year, y=ONI)) +
-  geom_line() +
+  geom_smooth() +
   theme_bw() +
   ylab("Oceanic Nino Index (ONI)") +
   xlab("Year") +
@@ -42,6 +42,32 @@ return(plot)
 
 
 }
+
+### Predict Precip
+
+library(tidyverse)
+
+predict_precip = function(data, ONI=0) {
+  model <- lm(PRCP ~ ONI, data = (data))
+  prediction <- model$coefficients[1] + ((model$coefficients[2]) * ONI)
+  
+  if(ONI > 3)
+  return("Error, ONI can only be between -3 and 3")
+  
+  if(ONI < -3)
+  return("Error, ONI can only be between -3 and 3")
+  
+  else 
+  if(prediction < 0) 
+    return(list("Rainfall Prediction"= 0))  
+    else
+    return(list("Rainfall Prediction" =prediction))
+}
+
+
+
+
+
 
 
 
