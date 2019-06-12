@@ -24,9 +24,7 @@ enso_extremes = function(data) {
 }
 
 
-
 ### Graph function
-
 
 enso_plot = function(data) {
   plot <- ggplot(enso_data, aes(x=year, y=ONI)) +
@@ -71,6 +69,8 @@ predict_precip = function(data, ONI=0) {
 '%!in%' <- function(x,y)!('%in%'(x,y))
 
 possible_months <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
+
+
 predict_temp = function(data, month, ONI=0) {
   model <- lm(TAVG ~ month + ONI, data = (data))
   prediction <- model$coefficients[1] + model$coefficients[month] + (ONI * model$coefficients[13])
@@ -101,6 +101,22 @@ predict_temp = function(data, month, ONI=0) {
 }
 
 
+### Predict Costs
 
+enso_costs <- function(ONI, risk =.811, gdp =21.9) {
+  damages <- (ONI*.01) * risk * gdp
+
+if(ONI > 3)
+  return("Error, ONI can only be between -3 and 3")
+
+if(ONI < -3)
+  return("Error, ONI can only be between -3 and 3")
+
+else
+  if(ONI <= 0)
+    return("No Increased Risk of Natural Disaster Costs")
+  else
+    return(list("Expected One Year Increase in Natural Disaster Costs Attributed to El Nino in Billions of USD" =damages))
+}
 
 
