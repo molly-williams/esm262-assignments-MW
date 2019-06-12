@@ -9,7 +9,7 @@ output:
 ---
 
 ### Background
-We chose to develop our package based on ENSO data, as climate change is expected to intensify impacts from El Nino and La Nina. We created two functions to summarize the monthly ENSO data from 1950-2018 (which ranges from -2 to 2 and is based on sea surface temperature monitoring) and three functions to estimate weather impacts and costs from increased risk of environmental disturbances. 
+We chose to develop our package based on ENSO data, as climate change is expected to intensify impacts from El Nino and La Nina. We created two functions to summarize the monthly ENSO data from 1950-2018 (which ranges from -3 to 3 and is based on sea surface temperature monitoring) and three functions to estimate weather impacts and costs from increased risk of environmental disturbances. 
 
 Data source: [NOAA ESRL](https://www.esrl.noaa.gov/psd/data/correlation/oni.data)
 
@@ -68,8 +68,11 @@ enso_data <-  enso_data_raw %>%
   tidyr::gather(key="month", value="ONI", -(year)) %>% 
   dplyr::transmute(year = parse_double(year),
                    month = parse_double(month),
-                   ONI = parse_double(ONI)) %>% 
-  mutate(date = with(enso_data, sprintf("%d-%02d", year, month)))
+                   ONI = parse_double(ONI))
+
+enso_data <- mutate(enso_data, date=with(enso_data, sprintf("%d-%02d", year, month)))
+
+
 
 
 ```
