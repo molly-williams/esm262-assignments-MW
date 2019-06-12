@@ -50,6 +50,7 @@ library(tidyverse)
 predict_precip = function(data, ONI=0) {
   model <- lm(PRCP ~ ONI, data = (data))
   prediction <- model$coefficients[1] + ((model$coefficients[2]) * ONI)
+  names(prediction) <- NULL
   
   if(ONI > 3)
   return("Error, ONI can only be between -3 and 3")
@@ -65,7 +66,39 @@ predict_precip = function(data, ONI=0) {
 }
 
 
+### Predict Temp
 
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+possible_months <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
+predict_temp = function(data, month, ONI=0) {
+  model <- lm(TAVG ~ month + ONI, data = (data))
+  prediction <- model$coefficients[1] + model$coefficients[month] + (ONI * model$coefficients[13])
+  prediction_jan <- model$coefficients[1] + (ONI * model$coefficients[13])
+  
+  
+  names(prediction) <- NULL
+  names(prediction_jan) <- NULL
+
+  if(ONI > 3)
+    return("Error, ONI can only be between -3 and 3")
+  
+  if(ONI < -3)
+    return("Error, ONI can only be between -3 and 3")
+  
+  else
+  if(month %!in% possible_months)
+    return(list("Error, month must be between 1 and 12"))
+  
+  else 
+  if(prediction < 0) 
+      return(list("Monthly Average Temperature Prediction"= 0))  
+  else
+    if(month == '1')
+    return(list("Monthly Average Temperature Prediction" =prediction_jan))
+  else
+    return(list("Monthly Average Temperature Prediction" =prediction))
+}
 
 
 

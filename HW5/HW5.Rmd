@@ -75,8 +75,8 @@ enso_data <- mutate(enso_data, date=with(enso_data, sprintf("%d-%02d", year, mon
 #Adding weather data from Port Moresby, Papua New Guinea, taken from NOAA data tool and creating a dataframe which contains monthly ONI value along with Precipitation and Temperature for every month available (up tell 2003)
 weather <- read_csv("port_moresby_weather.csv")
 colnames(weather)[colnames(weather)=="DATE"] <- "date"
-
 port_moresby <- left_join(weather, enso_data, by = "date")
+port_moresby$month <- as.factor(port_moresby$month)
 
 ```
 
@@ -84,46 +84,45 @@ port_moresby <- left_join(weather, enso_data, by = "date")
 ### Summary functions
 ```{r}
 
+#Function which reterms min and max ONI values in data
+
 enso_extremes(enso_data)
+
+
+```
+
+
+```{r}
+
+#Functions which returns a plot of ONI score overtime, we used a smooth lined plot which helps us visualize long term trends in ONI levels (i.e., are there changes with climate change?)
 
 enso_plot(enso_data)
 
-# This looks pretty weird... should we do any smoothing on it or add any labels for what the values mean? (e.g. add a band for where it's considered La Nina vs El Nino)
-  
 ```
 
-
-```{r}
-try <- lm(PRCP ~ ONI, data = port_moresby)
-
-try$coefficients
-```
-
-
-```{r}
-predict_precip = function(data) {
-  model <- lm(PRCP ~ ONI, data = (data))
-  
- return(model$coefficients) 
-}
-
-predict_precip(port_moresby)
-```
 
 
 ### Impact functions
 ```{r}
+#precipitation function
 
-
+predict_precip(port_moresby, ONI = 1 )
 ```
 
 
 ### Cost function
 ```{r}
 
-
+predict_temp(port_moresby, ONI =3, month = 12)
 ```
 
+
+```{r}
+v <- lm(TAVG ~ month + ONI, data = port_moresby)
+
+v$coefficients
+ 
+```
 
 
 
