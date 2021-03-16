@@ -56,7 +56,7 @@ source("oni_function.R")
 ### Import and wrangle data 
 ```{r}
 
-# Import data from ONI databse (NOAA ESRL)
+# Import data from ONI databse (NOAA ESRL) as a multi-dimensional array
 enso_data_raw <-
   read_delim(
     "oni data.csv",
@@ -87,7 +87,7 @@ port_moresby$month <- as.factor(port_moresby$month)
 ### Summary functions
 ```{r}
 
-#Function which reterms min and max ONI values in data
+#Function which reterms min and max ONI values in dataset
 
 enso_extremes(enso_data)
 
@@ -99,6 +99,9 @@ enso_extremes(enso_data)
 
 #Functions which returns a plot of ONI score overtime, we used a smooth lined plot which helps us visualize long term trends in ONI levels (i.e., are there changes with climate change?)
 
+# Plot uses geom_smooth, with blue line representing the average and gray area representing the range of ONI data
+
+
 enso_plot(enso_data)
 
 ```
@@ -109,14 +112,14 @@ enso_plot(enso_data)
 ```{r}
 #precipitation function, user inputs ONI only, result is in monthly rainfall in inches
 
-predict_precip(port_moresby, ONI = 1 )
+predict_precip(port_moresby, ONI = 1)
 ```
 
 
 
 ```{r}
 #temperature function, user inputs ONI and month, where 1 corresponds to January, 2 to February, etc.
-predict_temp(port_moresby, ONI =3 , month = 12)
+predict_temp(port_moresby, ONI = 3, month = 12)
 ```
 
 ### Cost function
